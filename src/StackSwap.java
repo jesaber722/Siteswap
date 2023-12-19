@@ -2,6 +2,7 @@ import java.util.Arrays;
 
 public class StackSwap {
 
+
     public final int [] swaps;
     public final int length;
     public final int balls;
@@ -14,6 +15,61 @@ public class StackSwap {
         }
         swaps = sw;
         balls = Arrays.stream(sw).max().orElse(0);
+    }
+
+    /**
+     * Removes zeros from stack notation and returns the new StackSwap
+     * @return the new StackSwap
+     */
+    public StackSwap regularize(){
+        int count = 0;
+
+        for(int i = 0; i < swaps.length; i++){
+            if(swaps[i] > 0){
+                count ++;
+            }
+        }
+
+        int [] newSwaps = new int[count];
+        int index = 0;
+
+        for(int i = 0; i < swaps.length; i++){
+            if(swaps[i] > 0){
+                newSwaps[index] = swaps[i];
+                index ++;
+            }
+        }
+
+        return new StackSwap(newSwaps);
+
+    }
+
+
+    /**
+     * Removes ones and zeros from stack notation and returns the new StackSwap
+     * @return the new StackSwap
+     */
+    public StackSwap hardRegularize(){
+        int count = 0;
+
+        for(int i = 0; i < swaps.length; i++){
+            if(swaps[i] > 1){
+                count ++;
+            }
+        }
+
+        int [] newSwaps = new int[count];
+        int index = 0;
+
+        for(int i = 0; i < swaps.length; i++){
+            if(swaps[i] > 1){
+                newSwaps[index] = swaps[i];
+                index ++;
+            }
+        }
+
+        return new StackSwap(newSwaps);
+
     }
 
     public StackChain toStackChain(){
