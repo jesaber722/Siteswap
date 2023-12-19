@@ -1,19 +1,48 @@
 public class Dichain {
-    public boolean swich;
+    public boolean flip;
     public final Dithrow [] thros;
 
     public Dichain(Dithrow [] thros){
+        int flux = 0;
+
+        for(int i = 0; i < thros.length; i++){
+            //System.out.println("flux: " + flux);
+            if(thros[i].source == Dithrow.Side.LEFT && thros[i].dest == Dithrow.Side.RIGHT){
+                flux ++;
+            } else if(thros[i].source == Dithrow.Side.RIGHT && thros[i].dest == Dithrow.Side.LEFT){
+                flux --;
+            }
+        }
+        if(flux != 0){
+            System.out.println(thros.length);
+            throw new Siteswap.SiteswapException();
+        }
         this.thros = thros;
-        swich = false;
+        flip = false;
     }
 
-    public Dichain(Dithrow [] thros, boolean swich){
+    public Dichain(Dithrow [] thros, boolean flip){
+        if(!flip){
+            int flux = 0;
+
+            for(int i = 0; i < thros.length; i++){
+                if(thros[i].source == Dithrow.Side.LEFT && thros[i].dest == Dithrow.Side.RIGHT){
+                    flux ++;
+                } else if(thros[i].source == Dithrow.Side.RIGHT && thros[i].dest == Dithrow.Side.LEFT){
+                    flux --;
+                }
+            }
+            if(flux != 0){
+                throw new Siteswap.SiteswapException();
+            }
+        }
         this.thros = thros;
-        this.swich = swich;
+        this.flip = flip;
+
     }
 
     public Dichain expand(){
-        if(swich){
+        if(flip){
             Dithrow [] newThros = new Dithrow[thros.length * 2];
             for(int i = 0; i < thros.length * 2; i++){
                 if (i < thros.length){
@@ -29,9 +58,9 @@ public class Dichain {
     }
 
     public Dichain compress(){
-        if(!swich && thros.length % 2 == 0){
+        if(!flip && thros.length % 2 == 0){
             for(int i = 0; i < thros.length / 2; i++){
-                if(thros[i] != thros[i + thros.length / 2].mirror()){
+                if(!thros[i].equals( thros[i + thros.length / 2].mirror())){
                     return this;
                 }
             }
@@ -40,7 +69,7 @@ public class Dichain {
             for(int i = 0; i < thros.length / 2; i++){
                 newThros[i] = thros[i];
             }
-            return new Dichain(thros, true);
+            return new Dichain(newThros, true);
         } else {
             return this;
         }
@@ -50,7 +79,7 @@ public class Dichain {
         Dichain chain = this.expand();
 
 
-        for(int divisor = 1; divisor < Math.ceil(Math.sqrt(chain.thros.length)); divisor ++){
+        for(int divisor = 1; divisor <= chain.thros.length / 2; divisor ++){
             if(chain.thros.length % divisor != 0){
                 continue;
             }
@@ -58,7 +87,8 @@ public class Dichain {
             breaklev:
             for(int residue = 0; residue < divisor; residue ++){
                 for(int equiv = 0; residue + equiv*divisor < chain.thros.length; equiv ++){
-                    if(chain.thros[residue] != chain.thros[residue + equiv*divisor]){
+                    if(!chain.thros[residue].equals( chain.thros[residue + equiv*divisor])){
+
                         success = false;
                         break breaklev;
                     }
@@ -69,13 +99,41 @@ public class Dichain {
                 for(int i = 0; i < newThrows.length; i++){
                     newThrows[i] = chain.thros[i];
                 }
+                //System.out.println("I am here");
                 return new Dichain(newThrows).compress();
             }
         }
         return this;
     }
 
+    public boolean isPeriodic(){
+        Dichain chain = this.expand();
+
+
+        for(int divisor = 1; divisor <= chain.thros.length / 2; divisor ++){
+            if(chain.thros.length % divisor != 0){
+                continue;
+            }
+            boolean success = true;
+            breaklev:
+            for(int residue = 0; residue < divisor; residue ++){
+                for(int equiv = 0; residue + equiv*divisor < chain.thros.length; equiv ++){
+                    if(!chain.thros[residue].equals( chain.thros[residue + equiv*divisor])){
+                        success = false;
+                        break breaklev;
+                    }
+                }
+            }
+            if(success){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Disiteswap toDisiteswap(){
+        Dichain r = this.expand();
+        Dithrow [] thros = r.thros;
         Dithrow [] newThros = new Dithrow[thros.length];
         for(int throIndex = 0; throIndex < thros.length; throIndex++){
             int height;
@@ -111,6 +169,85 @@ public class Dichain {
                 score ++;
                 index = (index + 1) % thros.length;
             }
+            newThros[throIndex] = new Dithrow(thros[throIndex].source, thros[throIndex].dest, score);
         }
+        if(flip) {
+            return new Disiteswap(newThros).compress();
+        } else {
+            return new Disiteswap(newThros);
+        }
+    }
+
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append("{");
+        for(int i = 0; i < thros.length; i++){
+            str.append(thros[i].toString());
+            if(i != thros.length - 1){
+                str.append(",");
+            }
+        }
+        if(flip){
+            str.append("*");
+        }
+        str.append("}");
+        return str.toString();
+    }
+
+    public static void main(String [] args){
+        //test 1
+        Dichain chain1 = new Dichain(new Dithrow[]
+                {
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 2),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 0),
+        });
+        System.out.println(chain1);
+        System.out.println(chain1.toDisiteswap());
+        System.out.println(chain1.isPeriodic());
+        //test 2
+        Dichain chain2 = new Dichain(new Dithrow[]
+                {
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 2),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 0),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 2),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 0),
+                });
+        System.out.println(chain2);
+        System.out.println(chain2.toDisiteswap());
+        System.out.println(chain2.isPeriodic());
+        //test 3
+
+
+        Dichain chain3 = new Dichain(new Dithrow[]
+                {
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 1),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 0),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3).mirror(),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 1).mirror(),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 0).mirror(),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 1),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 0),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3).mirror(),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 1).mirror(),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 0).mirror(),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 1),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 0),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3).mirror(),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 1).mirror(),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 0).mirror(),
+
+                });
+
+
+        System.out.println(new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 3).mirror());
+        System.out.println(chain3.isPeriodic());
+        System.out.println(chain3.reduce());
+        System.out.println(chain3.reduce().expand());
     }
 }

@@ -39,7 +39,7 @@ public class Siteswap {
         return new StateChain(this);
     }
 
-    public StackSwap tooStackSwap(){
+    public StackSwap toStackSwap(){
         return new StateChain(this).toStackSwap();
     }
 
@@ -75,7 +75,7 @@ public class Siteswap {
 
 
         Siteswap ss = new Siteswap(new int[]{10, 4, 1, 5});
-        StackSwap sw = new Siteswap(new int[]{10, 4, 1, 5}).tooStackSwap();
+        StackSwap sw = new Siteswap(new int[]{10, 4, 1, 5}).toStackSwap();
         System.out.print(ss.toStateChain().toString() + "\n\n");
         System.out.println(sw);
         System.out.println(sw.toStackChain());

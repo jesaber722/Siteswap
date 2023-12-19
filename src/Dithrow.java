@@ -17,12 +17,12 @@ public class Dithrow {
 
     public Dithrow mirror(){
         Side nsrc = source == Side.LEFT? Side.RIGHT : Side.LEFT;
-        Side ndest = source == Side.LEFT? Side.RIGHT : Side.LEFT;
+        Side ndest = dest == Side.LEFT? Side.RIGHT : Side.LEFT;
 
         return new Dithrow(nsrc, ndest, swap);
     }
 
-    public boolean equal(Object other){
+    public boolean equals(Object other){
         if(other instanceof Dithrow){
             Dithrow friend = (Dithrow)other;
 
