@@ -103,7 +103,7 @@ public class Dichain {
                 return new Dichain(newThrows).compress();
             }
         }
-        return this;
+        return this.compress();
     }
 
     public boolean isPeriodic(){
@@ -133,6 +133,7 @@ public class Dichain {
 
     public Disiteswap toDisiteswap(){
         Dichain r = this.expand();
+        //System.out.print("DEGUG r= " + r);
         Dithrow [] thros = r.thros;
         Dithrow [] newThros = new Dithrow[thros.length];
         for(int throIndex = 0; throIndex < thros.length; throIndex++){
@@ -146,6 +147,7 @@ public class Dichain {
             int score = 1;
             Dithrow.Side side = thros[throIndex].dest;
             while(true){
+                //System.out.println("height " + height);
                 if(thros[index].source == side && thros[index].dest == side){
                     if(height == 1){
                         if(thros[index].swap > 0)
@@ -169,6 +171,7 @@ public class Dichain {
                 score ++;
                 index = (index + 1) % thros.length;
             }
+            //System.out.println("SPACE");
             newThros[throIndex] = new Dithrow(thros[throIndex].source, thros[throIndex].dest, score);
         }
         if(flip) {
@@ -249,5 +252,23 @@ public class Dichain {
         System.out.println(chain3.isPeriodic());
         System.out.println(chain3.reduce());
         System.out.println(chain3.reduce().expand());
+
+        // test 4
+
+        System.out.println();
+
+        Dichain chain4 = new Dichain(new Dithrow[]
+                {
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 1),
+                        new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 1),
+                        new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 0),
+
+                }, true);
+
+        System.out.println(chain4.toDisiteswap());
+        System.out.println(chain4.toDisiteswap().isSmooth());
+        System.out.println(chain4.toDisiteswap().smoothify());
+        System.out.println(chain4.toDisiteswap().smoothify().toSiteswap());
+        System.out.println(chain4.toDisiteswap().smoothify().toSiteswap().isSimple());
     }
 }

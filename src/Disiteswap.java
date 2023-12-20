@@ -105,7 +105,7 @@ public class Disiteswap {
                 return new Disiteswap(newThrows).compress();
             }
         }
-        return this;
+        return this.compress();
     }
 
     public boolean isPeriodic(){
@@ -131,6 +131,19 @@ public class Disiteswap {
             }
         }
         return false;
+    }
+
+    public boolean isSmooth(){
+        for(int i = 0; i < thros.length - 1; i++){
+            if(thros[i].source == thros[(i+1) % thros.length].source){
+                return false;
+            }
+        }
+        if(flip){
+            return thros[0].source == thros[thros.length - 1].source;
+        } else {
+            return thros[0].source != thros[thros.length - 1].source;
+        }
     }
 
     public Disiteswap smoothify(){
@@ -182,11 +195,46 @@ public class Disiteswap {
         return new Disiteswap(newThros).ensmoothen();
     }
 
+    public Siteswap toSiteswap(){
+        if (!isSmooth()){
+            throw new Siteswap.SiteswapException();
+        } else {
+            int [] nums = new int[thros.length];
+            for(int i = 0; i < nums.length; i++){
+                nums[i] = thros[i].swap;
+            }
+            return new Siteswap(nums);
+        }
+    }
+
     public String toString(){
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < thros.length; i++){
             str.append(thros[i].toString());
         }
+        if(flip){
+            str.append("*");
+        }
         return str.toString();
+    }
+
+    public static void main(String [] args){
+        Disiteswap ds1 = new Disiteswap(new Dithrow[]{
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 4),
+                new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 0),
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 5),
+                new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, 0),
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 1),
+                new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 4),
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.LEFT, 0),
+                new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 10),
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.LEFT, 0),
+                new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 4),
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 4),
+                new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 4),
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 4),
+                new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, 4),
+                new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, 4),
+        });
     }
 }

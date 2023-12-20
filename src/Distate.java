@@ -17,12 +17,12 @@ public class Distate {
 
 
     public static class SuccRet{
-        Distate distates;
-        Dithrow dithrows;
+        Distate distate;
+        Dithrow dithrow;
 
-        public SuccRet(Distate distates, Dithrow dithrows){
-            this.distates = distates;
-            this.dithrows = dithrows;
+        public SuccRet(Distate distate, Dithrow dithrow){
+            this.distate = distate;
+            this.dithrow = dithrow;
 
         }
     }
@@ -168,7 +168,7 @@ public class Distate {
         ArrayList<SuccRet> rets = ds1.getSuccessors();
 
         for(int i = 0; i < rets.size(); i++){
-            System.out.println(rets.get(i).distates);
+            System.out.println(rets.get(i).distate);
         }
     }
 }

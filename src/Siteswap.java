@@ -1,3 +1,5 @@
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.stream.IntStream;
 
 public class Siteswap {
@@ -43,6 +45,47 @@ public class Siteswap {
         return new StateChain(this).toStackSwap();
     }
 
+    public boolean isSimple(){
+        StateChain chain = this.toStateChain();
+        HashSet<State> seen = new HashSet<>();
+        boolean [][] states = chain.states;
+
+        for(int i = 0; i < states.length; i++){
+            State state = new State(states[i]);
+
+            if(seen.contains(state)){
+                return false;
+            } else {
+                seen.add(state);
+            }
+        }
+
+        return true;
+    }
+
+    public boolean looseEquals(Siteswap other){
+        int [] these = numbers;
+        int [] those = other.numbers;
+
+        if(these.length != other.length){
+            return false;
+        }
+
+        for(int offset = 0; offset < these.length; offset ++){
+            boolean success = true;
+            for(int i = 0; i < these.length; i++){
+                if(these[i] != those[(i + offset) % these.length]){
+                    success = false;
+                    break;
+                }
+            }
+            if(success){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String toString(){
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < numbers.length; i++){
@@ -79,5 +122,26 @@ public class Siteswap {
         System.out.print(ss.toStateChain().toString() + "\n\n");
         System.out.println(sw);
         System.out.println(sw.toStackChain());
+
+        System.out.println("MORE TESTS");
+        System.out.println(new Siteswap(new int[]{5, 3, 1}).isSimple());
+        System.out.println(new Siteswap(new int[]{4, 2, 3}).isSimple());
+        System.out.println(new Siteswap(new int[]{7, 4, 1}).isSimple());
+        System.out.println(new Siteswap(new int[]{5,6,4,5,0,5,3}).isSimple());
+        System.out.println(new Siteswap(new int[]{5,6,4,5,0}).isSimple());
+
+        /*
+        // success on all
+        System.out.println("LOOSEEQ T "+ new Siteswap(new int[]{5,6,4,5,0}).looseEquals(new Siteswap(new int[]{0,5,6,4,5})));
+        System.out.println("LOOSEEQ T "+ new Siteswap(new int[]{5,6,4,5,0}).looseEquals(new Siteswap(new int[]{5,0,5,6,4})));
+        System.out.println("LOOSEEQ F "+ new Siteswap(new int[]{5,6,4,5,0}).looseEquals(new Siteswap(new int[]{5,0,5,11,4})));
+        System.out.println("LOOSEEQ F "+ new Siteswap(new int[]{5,6,4,5,0}).looseEquals(new Siteswap(new int[]{5, 3, 1})));
+        System.out.println("LOOSEEQ T "+ new Siteswap(new int[]{5, 3, 1}).looseEquals(new Siteswap(new int[]{5, 3, 1})));
+        System.out.println("LOOSEEQ T "+ new Siteswap(new int[]{5, 3, 1}).looseEquals(new Siteswap(new int[]{3, 1, 5})));
+        System.out.println("LOOSEEQ F "+ new Siteswap(new int[]{5, 3, 1}).looseEquals(new Siteswap(new int[]{4, 4, 1})));
+
+         */
+
+        System.out.println(new Siteswap(new int[]{4, 5, 5, 0, 1}).toStateChain());
     }
 }
