@@ -137,6 +137,10 @@ public class Dichain {
         Dithrow [] thros = r.thros;
         Dithrow [] newThros = new Dithrow[thros.length];
         for(int throIndex = 0; throIndex < thros.length; throIndex++){
+            if(thros[throIndex].source == thros[throIndex].dest && thros[throIndex].swap == 0){
+                newThros[throIndex] = new Dithrow(thros[throIndex].source, thros[throIndex].dest, 0);
+                continue;
+            }
             int height;
             if(thros[throIndex].source == thros[throIndex].dest) {
                 height = thros[throIndex].swap;

@@ -119,6 +119,107 @@ public class SymDistate extends Distate {
         return ret;
     }
 
+    /**
+     * Get all successors to this position, ignoring swaps of 0 and 1
+     * @return
+     */
+    public ArrayList<SymDistate.SymSuccRet> getSymGroundableSuccessors() {
+        ArrayList<SymSuccRet> ret = new ArrayList<>();
+
+        //left-to-left
+        for(int swap = left.length; swap < left.length + 1; swap ++){
+            int [] newLeft = new int[left.length];
+            int [] newRight = new int[right.length];
+
+            for(int i = 0; i < left.length; i++){
+                if(i < swap - 1){
+                    newLeft[i] = left[i + 1];
+                } else if(i == swap - 1){
+                    newLeft[i] = left[0];
+                } else {
+                    newLeft[i] = left[i];
+                }
+            }
+
+            for(int i = 0; i < right.length; i++){
+                newRight[i] = right[i];
+            }
+
+            ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.LEFT, swap)));
+        }
+
+        //left-to-right
+        if(left.length > 0) {
+            for (int swap = Math.max(2, right.length); swap < right.length + 1; swap++) {
+                int[] newLeft = new int[left.length - 1];
+                int[] newRight = new int[right.length + 1];
+
+                for (int i = 0; i < newLeft.length; i++) {
+                    newLeft[i] = left[i + 1];
+                }
+
+                for (int i = 0; i < newRight.length; i++) {
+                    if (i < swap) {
+                        newRight[i] = right[i];
+                    } else if (i == swap) {
+                        newRight[i] = left[0];
+                    } else {
+                        newRight[i] = right[i - 1];
+                    }
+                }
+
+                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap)));
+            }
+        }
+
+        //right-to-right
+        for(int swap = Math.max(2, right.length); swap < right.length + 1; swap ++){
+            int [] newRight = new int[right.length];
+            int [] newLeft = new int[left.length];
+
+            for(int i = 0; i < right.length; i++){
+                if(i < swap - 1){
+                    newRight[i] = right[i + 1];
+                } else if(i == swap - 1){
+                    newRight[i] = right[0];
+                } else {
+                    newRight[i] = right[i];
+                }
+            }
+
+            for(int i = 0; i < left.length; i++){
+                newLeft[i] = left[i];
+            }
+
+            ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.RIGHT, swap)));
+        }
+
+        //right-to-left
+        if(right.length > 0) {
+            for (int swap = left.length; swap < left.length + 1; swap++) {
+                int[] newRight = new int[right.length - 1];
+                int[] newLeft = new int[left.length + 1];
+
+                for (int i = 0; i < newRight.length; i++) {
+                    newRight[i] = right[i + 1];
+                }
+
+                for (int i = 0; i < newLeft.length; i++) {
+                    if (i < swap) {
+                        newLeft[i] = left[i];
+                    } else if (i == swap) {
+                        newLeft[i] = right[0];
+                    } else {
+                        newLeft[i] = left[i - 1];
+                    }
+                }
+
+                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap)));
+            }
+        }
+        return ret;
+    }
+
     @Override
     public boolean equals(Object other){
         if(other instanceof Distate){

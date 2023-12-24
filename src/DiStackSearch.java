@@ -20,7 +20,7 @@ public class DiStackSearch {
 
          */
         int count = 0;
-        if(Math.random() < thros.size()*0.01){
+        if(Math.random() < thros.size()*0.00){
             return 0;
         }
         if(Math.random() < 0.000002){
@@ -42,17 +42,12 @@ public class DiStackSearch {
 
             }
         }
-        //System.out.println("CURRENT: " + current);
+        System.out.println("CURRENT: " + current);
         ArrayList<SymDistate.SymSuccRet> next = current.getSymSuccessors();
         Collections.shuffle(next);
         int badBranches = 0;
         boolean skipping = false;
         for(SymDistate.SymSuccRet successor: next){
-            if(badBranches == 1){
-                if(Math.random() < 0.0){
-                    continue;
-                }
-            }
             if(current.equals(start)){
                 //System.out.println("RESUMING START");
             }
@@ -76,20 +71,25 @@ public class DiStackSearch {
                 Siteswap ss = chain.toDisiteswap().smoothify().reduce().toSiteswap();
                 //System.out.println("pre");
                 //System.out.print("ss: " + ss + "| ");
+
+                // simple of "prime" siteswap check
                 if(ss.isSimple()){
                     boolean duplicate = false;
+
                     /*
+                    //duplicate check
                     for(Siteswap already: found){
                         if(already.looseEquals(ss)){
                             duplicate = true;
                             break;
                         }
                     }
-
                      */
+
+
                     if(!duplicate) {
                         count ++;
-                        //System.out.println("ADDING " + ss);
+                        System.out.println("ADDING " + ss);
                         found.add(ss);
                     }
                 }
@@ -97,7 +97,19 @@ public class DiStackSearch {
             } else if(seen.contains(successor.distate)) {
                 // pass
             } else {
-                if(badBranches >= 2){
+
+
+                /*
+                bad branch heuristic code
+                I will be commenting this in and out a lot
+                 */
+                if(badBranches == 1){
+                    if(Math.random() < 0.0){
+                        continue;
+                    }
+                }
+
+                if(badBranches >= 2999999){
                     // if the other branches yielded nothing, this probably won't either
                     //System.out.println("SKIPPING");
                     continue;
@@ -120,36 +132,59 @@ public class DiStackSearch {
     }
 
     public static void main(String [] args){
-        SymDistate start = new SymDistate(new int[]{0,1, 2}, new int[]{3, 4});
+        SymDistate start = new SymDistate(new int[]{0,1,}, new int[]{2, });
         HashSet<SymDistate> seen = new HashSet<>();
         ArrayList<Dithrow> thros = new ArrayList<>();
         search(seen, thros, start, start);
 
-        /*
-        start = new SymDistate(new int[]{0, 1, 2}, new int[]{3});
+
+        start = new SymDistate(new int[]{0, 1, 2}, new int[]{});
         seen = new HashSet<>();
         thros = new ArrayList<>();
         search(seen, thros, start, start);
-
+        System.out.println("DONE - OUTPUTTING");
+        /*
         start = new SymDistate(new int[]{0, 1, 2, 3}, new int[]{});
         seen = new HashSet<>();
         thros = new ArrayList<>();
         search(seen, thros, start, start);
         */
 
+        System.out.print("DUPLICATE REMOVAL...");
+
         for(int i = 0; i < found.size(); i++){
-            if(found.get(i).balls < 4){
+            boolean duplicate = false;
+            for(int j = 0; j < found.size(); j++){
+                if(i == j){
+                    continue;
+                }
+                if(found.get(j).looseEquals(found.get(i))){
+                    duplicate = true;
+                    break;
+                }
+            }
+            if(duplicate){
                 found.remove(i);
                 i --;
-            } else if(found.get(i).balls > 4){
+            }
+        }
+        System.out.println(" DONE");
+
+        for(int i = 0; i < found.size(); i++){
+            if(found.get(i).balls < 3){
+                found.remove(i);
+                i --;
+            } else if(found.get(i).balls > 3){
                 throw new Siteswap.SiteswapException();
             }
         }
         System.out.println("\nFINAL:");
+        System.out.println("SIZE: " + found.size());
         for(int i  = 0; i < found.size(); i++){
             System.out.println(found.get(i));
         }
 
+        //System.out.println("DONE - OUTPUTTING");
         File file = new File("output");
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
