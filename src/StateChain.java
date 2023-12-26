@@ -185,4 +185,8 @@ public class StateChain {
         }
         return new StackSwap(nums);
     }
+
+    public Dichain toDichain(){
+        return null;
+    }
 }
