@@ -67,7 +67,7 @@ public class SymDistate extends Distate {
                     }
                 }
 
-                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap)));
+                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap + 1)));
             }
         }
 
@@ -113,7 +113,7 @@ public class SymDistate extends Distate {
                     }
                 }
 
-                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap)));
+                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap + 1)));
             }
         }
         return ret;
@@ -168,7 +168,7 @@ public class SymDistate extends Distate {
                     }
                 }
 
-                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap)));
+                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap + 1)));
             }
         }
 
@@ -214,7 +214,7 @@ public class SymDistate extends Distate {
                     }
                 }
 
-                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap)));
+                ret.add(new SymSuccRet(new SymDistate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap + 1)));
             }
         }
         return ret;

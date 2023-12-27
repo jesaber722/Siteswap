@@ -75,7 +75,7 @@ public class Distate {
                 }
             }
 
-            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap)));
+            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap + 1)));
         }
 
         //right-to-right
@@ -119,7 +119,7 @@ public class Distate {
                 }
             }
 
-            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap)));
+            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap + 1)));
         }
         return ret;
     }
@@ -173,7 +173,7 @@ public class Distate {
                 }
             }
 
-            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap)));
+            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.LEFT, Dithrow.Side.RIGHT, swap + 1)));
         }
 
         //right-to-right
@@ -217,7 +217,7 @@ public class Distate {
                 }
             }
 
-            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap)));
+            ret.add(new SuccRet(new Distate(newLeft, newRight), new Dithrow(Dithrow.Side.RIGHT, Dithrow.Side.LEFT, swap + 1)));
         }
         return ret;
     }

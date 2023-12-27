@@ -104,12 +104,12 @@ public class DiStackSearch {
                 I will be commenting this in and out a lot
                  */
                 if(badBranches == 1){
-                    if(Math.random() < 0.0){
+                    if(Math.random() < 0.0){ // set to 0 to make do nothing
                         continue;
                     }
                 }
 
-                if(badBranches >= 2999999){
+                if(badBranches >= 2999999){ // make really really big to do nothing
                     // if the other branches yielded nothing, this probably won't either
                     //System.out.println("SKIPPING");
                     continue;

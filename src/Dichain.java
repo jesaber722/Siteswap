@@ -7,13 +7,14 @@ public class Dichain {
 
         for(int i = 0; i < thros.length; i++){
             //System.out.println("flux: " + flux);
-            if(thros[i].source == Dithrow.Side.LEFT && thros[i].dest == Dithrow.Side.RIGHT){
+            if(thros[i].source == Dithrow.Side.LEFT && thros[i].dest == Dithrow.Side.RIGHT && thros[i].swap > 0){
                 flux ++;
-            } else if(thros[i].source == Dithrow.Side.RIGHT && thros[i].dest == Dithrow.Side.LEFT){
+            } else if(thros[i].source == Dithrow.Side.RIGHT && thros[i].dest == Dithrow.Side.LEFT && thros[i].swap > 0){
                 flux --;
             }
         }
         if(flux != 0){
+            // no pattern can have a net flow from one hand to the other
             System.out.println(thros.length);
             throw new Siteswap.SiteswapException();
         }
@@ -26,13 +27,16 @@ public class Dichain {
             int flux = 0;
 
             for(int i = 0; i < thros.length; i++){
-                if(thros[i].source == Dithrow.Side.LEFT && thros[i].dest == Dithrow.Side.RIGHT){
+                if(thros[i].source == Dithrow.Side.LEFT && thros[i].dest == Dithrow.Side.RIGHT && thros[i].swap > 0){
                     flux ++;
-                } else if(thros[i].source == Dithrow.Side.RIGHT && thros[i].dest == Dithrow.Side.LEFT){
+                } else if(thros[i].source == Dithrow.Side.RIGHT && thros[i].dest == Dithrow.Side.LEFT && thros[i].swap > 0){
                     flux --;
                 }
             }
             if(flux != 0){
+                // no pattern can have a net flow from one hand to the other
+                for(Dithrow thr: thros)
+                    System.out.println(thr);
                 throw new Siteswap.SiteswapException();
             }
         }
@@ -137,16 +141,12 @@ public class Dichain {
         Dithrow [] thros = r.thros;
         Dithrow [] newThros = new Dithrow[thros.length];
         for(int throIndex = 0; throIndex < thros.length; throIndex++){
-            if(thros[throIndex].source == thros[throIndex].dest && thros[throIndex].swap == 0){
+            if(thros[throIndex].swap == 0){
                 newThros[throIndex] = new Dithrow(thros[throIndex].source, thros[throIndex].dest, 0);
                 continue;
             }
             int height;
-            if(thros[throIndex].source == thros[throIndex].dest) {
-                height = thros[throIndex].swap;
-            } else {
-                height = thros[throIndex].swap + 1;
-            }
+            height = thros[throIndex].swap;
             int index = (throIndex + 1) % thros.length;
             int score = 1;
             Dithrow.Side side = thros[throIndex].dest;
@@ -165,13 +165,13 @@ public class Dichain {
                     if(height == 1){
                         break;
                     } else {
-                        height --;
+                        height --; // ball is headed to other hand, so special ball's height will go down no matter what
                     }
                 } else if(thros[index].source != side && thros[index].dest == side){
-                    if(thros[index].swap < height){
+                    if(thros[index].swap < height + 1 && thros[index].swap != 0){
                         height ++;
                     }
-                }
+                } // else if both src and dest on other side, we don't really care
                 score ++;
                 index = (index + 1) % thros.length;
             }
